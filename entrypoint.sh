@@ -14,8 +14,23 @@ usage() {
 }
 
 start() {
-    cd ${BAMBOO_HOME}
-    java -Dbamboo.home=${BAMBOO_HOME} -jar bamboo-agent-6.6.1.jar ${BAMBOO_SERVER_ADDRESS} ${BAMBOO_SECURITY_TOKEN}
+    startAgent
+    if [ ! -f "bamboo-agent.cfg.xml" ]
+    then
+        echo ""
+        echo "********************************************************************************"
+        echo "* Startup of this agent failed"
+        echo "* This is probably because a newer version is available"
+        echo "* Retrying"
+        echo "********************************************************************************"
+        echo ""
+        startAgent
+    fi
+}
+
+startAgent() {
+    cd "${BAMBOO_HOME}"
+    java -Dbamboo.home="${BAMBOO_HOME}" -jar bamboo-agent-6.6.1.jar "${BAMBOO_SERVER_ADDRESS}" "${BAMBOO_SECURITY_TOKEN}"
 }
 
 # Evaluate arguments for build script.
