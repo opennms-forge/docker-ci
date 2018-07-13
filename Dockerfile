@@ -1,4 +1,4 @@
-FROM opennms/maven:latest
+FROM opennms/build-env:latest
 
 LABEL maintainer "Markus von Rüden <mvr@opennms.com>"
 
