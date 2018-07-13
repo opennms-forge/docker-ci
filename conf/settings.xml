@@ -1,0 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+   <settings>
+     <mirrors>
+       <mirror>
+         <id>maven-proxy</id>
+         <url>${MAVEN_PROXY}</url>
+         <mirrorOf>*</mirrorOf>
+       </mirror>
+    </mirrors>
+  </settings>

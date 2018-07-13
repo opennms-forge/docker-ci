@@ -13,7 +13,23 @@ usage() {
     echo ""
 }
 
+initConfig() {
+    if [ -z $MAVEN_PROXY ]; then
+        echo "No Maven Proxy provided. Skipping"
+    else
+        # Ensure ~/.m2 exists
+        if [ ! -d ~/.m2 ]; then
+            mkdir ~/.m2
+        fi
+        echo "Maven Proxy provided: ${MAVEN_PROXY}"
+        echo "Writing MAVEN_PROXY to ~/.m2/settings.xml"
+        cp "${BAMBOO_HOME}/settings.xml.template" ~/.m2/settings.xml
+        sed -i "s,<url>\${MAVEN_PROXY}</url>,<url>${MAVEN_PROXY}</url>," ~/.m2/settings.xml
+    fi
+}
+
 start() {
+    initConfig
     startAgent
     if [ ! -f "bamboo-agent.cfg.xml" ]
     then

@@ -9,6 +9,7 @@ ARG BAMBOO_DOWNLOAD_ADDRESS=http://localhost:8085
 ENV BAMBOO_HOME=/opt/bamboo-home
 ENV BAMBOO_SERVER_ADDRESS=http://localhost:8085/agentServer
 ENV BAMBOO_SECURITY_TOKEN=
+ENV MAVEN_PROXY=
 
 # Install wget
 RUN yum -y --setopt=tsflags=nodocs update && \
@@ -28,6 +29,7 @@ RUN mkdir -p ${BAMBOO_HOME} && \
 
 # Copy files
 COPY conf/bamboo-capabilities.properties ${BAMBOO_HOME}
+COPY conf/settings.xml ${BAMBOO_HOME}/settings.xml.template
 COPY entrypoint.sh /
 
 VOLUME [ "${BAMBOO_HOME}" ]
