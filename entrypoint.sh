@@ -28,8 +28,13 @@ initConfig() {
     fi
 }
 
+startPostgres() {
+    su postgres -c '/usr/pgsql-9.6/bin/postgres -D /var/lib/pgsql/data > /dev/null 2>&1 &'
+}
+
 start() {
     initConfig
+    startPostgres
     startAgent
     if [ ! -f "bamboo-agent.cfg.xml" ]
     then

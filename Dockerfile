@@ -17,11 +17,22 @@ RUN yum -y --setopt=tsflags=nodocs update && \
     yum clean all && \
     rm -rf /var/cache/yum
 
-# Install git
+# Install required dependencies for test-environment
 RUN yum -y --setopt=tsflags=nodocs update && \
-    yum -y install git && \
+    rpm -ivh https://yum.postgresql.org/9.6/redhat/rhel-7.3-x86_64/pgdg-centos96-9.6-3.noarch.rpm && \
+    yum -y install postgresql96 postgresql96-server postgresql96-libs postgresql96-contrib postgresql96-devel && \
     yum clean all && \
     rm -rf /var/cache/yum
+# Modified setup script to bypass systemctl variable read stuff
+ADD ./conf/postgres/postgresql-setup.sh /usr/bin/postgresql-setup
+RUN chmod +x /usr/bin/postgresql-setup
+RUN /usr/bin/postgresql-setup initdb
+
+#Access from all over --- NEVER DO THIS SHIT IN POST DEV ENVs !!!!!!!!!!!!!!!!!!!
+RUN echo "local   all             postgres                                peer" > /var/lib/pgsql/data/pg_hba.conf && \
+    echo "local   all             all                                     peer" >> /var/lib/pgsql/data/pg_hba.conf && \
+    echo "host    all             all             127.0.0.1/32            trust" >> /var/lib/pgsql/data/pg_hba.conf && \
+    echo "host    all             all             ::1/128                 trust" >> /var/lib/pgsql/data/pg_hba.conf
 
 # Download and install bamboo-agent.jar
 RUN mkdir -p ${BAMBOO_HOME} && \
@@ -32,7 +43,9 @@ COPY conf/bamboo-capabilities.properties ${BAMBOO_HOME}
 COPY conf/settings.xml ${BAMBOO_HOME}/settings.xml.template
 COPY entrypoint.sh /
 
-VOLUME [ "${BAMBOO_HOME}" ]
+EXPOSE 5432
+
+VOLUME [ "${BAMBOO_HOME}", "/var/lib/pgsql" ]
 
 LABEL license="AGPLv3" \
       org.opennms.horizon.version="${BAMBOO_VERSION}" \
