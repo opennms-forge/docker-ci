@@ -48,6 +48,14 @@ RUN echo "local   all             postgres                                peer" 
     echo "host    all             all             127.0.0.1/32            trust" >> /var/lib/pgsql/data/pg_hba.conf && \
     echo "host    all             all             ::1/128                 trust" >> /var/lib/pgsql/data/pg_hba.conf
 
+# Docker in Docker
+RUN yum -y --setopt=tsflags=nodocs update && \
+    yum -y install yum-utils device-mapper-persistent-data lvm2 && \
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
+    yum -y install docker-ce && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
 # Download and install bamboo-agent.jar
 RUN mkdir -p ${BAMBOO_HOME} && \
     wget --tries 3 -O ${BAMBOO_HOME}/${BAMBOO_AGENT} ${BAMBOO_DOWNLOAD_ADDRESS}/admin/agent/${BAMBOO_AGENT}
