@@ -17,7 +17,21 @@ RUN yum -y --setopt=tsflags=nodocs update && \
     yum clean all && \
     rm -rf /var/cache/yum
 
-# Install required dependencies for test-environment
+# Install R (somehow it is missing in build-env even if it is installed)
+RUN yum -y --setopt=tsflags=nodocs update && \
+    yum -y install epel-release && \
+    yum -y install R-core && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+# Install ssh-server (required for SshMonitorIT)
+RUN yum -y --setopt=tsflags=nodocs update && \
+    yum -y install openssh-server && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+RUN ssh-keygen -b 521 -t ecdsa -C"$(id -un)@$(hostname)-$(date --rfc-3339=date)" -f  /etc/ssh/ssh_host_ecdsa_key
+
+# Install Postgres, which is a required dependencies for test-environment
 RUN yum -y --setopt=tsflags=nodocs update && \
     rpm -ivh https://yum.postgresql.org/9.6/redhat/rhel-7.3-x86_64/pgdg-centos96-9.6-3.noarch.rpm && \
     yum -y install postgresql96 postgresql96-server postgresql96-libs postgresql96-contrib postgresql96-devel && \
@@ -43,6 +57,7 @@ COPY conf/bamboo-capabilities.properties ${BAMBOO_HOME}
 COPY conf/settings.xml ${BAMBOO_HOME}/settings.xml.template
 COPY entrypoint.sh /
 
+# 5432 Postgres
 EXPOSE 5432
 
 VOLUME [ "${BAMBOO_HOME}", "/var/lib/pgsql" ]

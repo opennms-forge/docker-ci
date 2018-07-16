@@ -30,10 +30,17 @@ initConfig() {
 
 startPostgres() {
     su postgres -c '/usr/pgsql-9.6/bin/postgres -D /var/lib/pgsql/data > /dev/null 2>&1 &'
+    sleep 5
+    psql -U postgres -h localhost -tAc "SELECT 1 FROM pg_roles WHERE rolname='opennms'" | grep -q 1 || psql -U postgres -h localhost -c 'create user opennms' || exit
+}
+
+startSshd() {
+    /usr/sbin/sshd -D > /dev/null 2>&1 &
 }
 
 start() {
     initConfig
+    startSshd
     startPostgres
     startAgent
     if [ ! -f "bamboo-agent.cfg.xml" ]
@@ -61,11 +68,15 @@ if [[ "${#}" == 0 ]]; then
 fi
 
 # Evaluate arguments for build script.
-while getopts sh flag; do
+while getopts sah flag; do
     case ${flag} in
         s)
             start
             ;;
+        a) 
+            initConfig
+            startAgent
+            ;;    
         h)
             usage
             exit
