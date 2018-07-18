@@ -22,6 +22,9 @@ initConfig() {
             mkdir ~/.m2
         fi
         echo "Maven Proxy provided: ${MAVEN_PROXY}"
+        echo "Trying to connect to ${MAVEN_PROXY} ..."
+        curl -s --connect-timeout 5 ${MAVEN_PROXY} || exit
+        echo "Could reach MAVEN PROXY!!!!";
         echo "Writing MAVEN_PROXY to ~/.m2/settings.xml"
         cp "${BAMBOO_HOME}/settings.xml.template" ~/.m2/settings.xml
         sed -i "s,<url>\${MAVEN_PROXY}</url>,<url>${MAVEN_PROXY}</url>," ~/.m2/settings.xml
