@@ -11,19 +11,6 @@ ENV BAMBOO_SERVER_ADDRESS=http://localhost:8085/agentServer
 ENV BAMBOO_SECURITY_TOKEN=
 ENV MAVEN_PROXY=
 
-# Install wget
-RUN yum -y --setopt=tsflags=nodocs update && \
-    yum -y install wget && \
-    yum clean all && \
-    rm -rf /var/cache/yum
-
-# Install R (somehow it is missing in build-env even if it is installed)
-RUN yum -y --setopt=tsflags=nodocs update && \
-    yum -y install epel-release && \
-    yum -y install R-core && \
-    yum clean all && \
-    rm -rf /var/cache/yum
-
 # Install ssh-server (required for SshMonitorIT)
 RUN yum -y --setopt=tsflags=nodocs update && \
     yum -y install openssh-server && \
