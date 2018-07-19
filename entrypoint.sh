@@ -8,7 +8,8 @@ usage() {
     echo ""
     echo "Docker entry script for Bamboo Agent service container"
     echo ""
-    echo "-s: Start the Bamboo Agent"
+    echo "-a: Only start the Bamboo Agent. No restart when not initialized is performed."
+    echo "-s: Start the Bamboo Agent and all requred services. Restarts the Agent if not initialized properly."
     echo "-h: Show this help."
     echo ""
 }
