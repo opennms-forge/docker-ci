@@ -77,3 +77,5 @@ LABEL license="AGPLv3" \
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "-h" ]
+
+WORKDIR ${BAMBOO_HOME}
