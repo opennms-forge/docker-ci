@@ -11,6 +11,16 @@ ENV BAMBOO_SERVER_ADDRESS=http://localhost:8085/agentServer
 ENV BAMBOO_SECURITY_TOKEN=
 ENV MAVEN_PROXY=
 
+# Install jq for json manipulation
+RUN yum -y --setopt=tsflags=nodocs update && \
+    yum -y install jq && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+# Install Maven Profiler Plugin
+# See https://github.com/jcgay/maven-profiler
+RUN wget --tries 3 -O "$MAVEN_HOME/lib/ext/maven-profiler-2.6-shaded.jar" http://dl.bintray.com/jcgay/maven/fr/jcgay/maven/maven-profiler/2.6/maven-profiler-2.6-shaded.jar
+
 # Install ssh-server (required for SshMonitorIT)
 RUN yum -y --setopt=tsflags=nodocs update && \
     yum -y install openssh-server && \
